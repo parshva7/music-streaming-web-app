@@ -24,4 +24,11 @@ Full-stack music and podcast streaming web application.
 - Protected routes using React Router
 - Global auth state using Context API
 - Navbar with login/logout handling
+  
+### ✅ Day 3
+- Supabase database schema designed
+- Categories, tracks, podcasts tables created
+- Foreign key relationships implemented
+- Express backend APIs created
+- APIs tested with real data and joins
 
