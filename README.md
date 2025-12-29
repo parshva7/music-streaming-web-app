@@ -32,3 +32,14 @@ Full-stack music and podcast streaming web application.
 - Express backend APIs created
 - APIs tested with real data and joins
 
+### ✅ Day 4
+- Global audio player implemented using HTML5 Audio API
+- Audio state managed globally with Context API
+- Music search functionality added (backend-powered search)
+- Track listing rendered dynamically in frontend
+- Play / pause functionality implemented
+- Seek functionality added for audio playback
+- Fixed bottom mini-player created for continuous playback
+- Currently playing track highlighted in UI
+- Audio playback persists across route changes 
+
