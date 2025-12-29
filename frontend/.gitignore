@@ -7,9 +7,20 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+frontend/dist/
+
+# Environment variables (VERY IMPORTANT)
+.env
+frontend/.env
+backend/.env
+
+# Local config
 *.local
 
 # Editor directories and files
@@ -22,3 +33,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
