@@ -11,44 +11,37 @@ Full-stack music and podcast streaming web application.
 ## Status
 ## Status
 
-### ✅ Day 1
-- Project setup completed
-- Frontend (React + Vite) initialized
-- Backend (Node + Express) initialized
-- GitHub repository configured
+## 🚀 Project Progress
 
-### ✅ Day 2
-- Supabase authentication integrated
-- Email & password signup with email verification
-- Login system with session persistence
-- Protected routes using React Router
-- Global auth state using Context API
-- Navbar with login/logout handling
-  
-### ✅ Day 3
-- Supabase database schema designed
-- Categories, tracks, podcasts tables created
-- Foreign key relationships implemented
-- Express backend APIs created
-- APIs tested with real data and joins
+### ✅ Day 1 – Project Setup
+- Initialized frontend using React + Vite  
+- Initialized backend using Node.js + Express  
+- GitHub repository configured  
 
-### ✅ Day 4
-- Global audio player implemented using HTML5 Audio API
-- Audio state managed globally with Context API
-- Music search functionality added (backend-powered search)
-- Track listing rendered dynamically in frontend
-- Play / pause functionality implemented
-- Seek functionality added for audio playback
-- Fixed bottom mini-player created for continuous playback
-- Currently playing track highlighted in UI
-- Audio playback persists across route changes
+### ✅ Day 2 – Authentication
+- Supabase authentication integrated  
+- Email & password signup with email verification  
+- Login with session persistence  
+- Protected routes using React Router  
+- Global auth state via Context API  
+- Navbar with login/logout handling  
 
-### ✅ Day 5
--Playlist creation and management implemented
--Add songs to playlists using dropdown selection
--Playlist–track relationship handled via backend APIs
--Songs displayed dynamically inside selected playlists
--Remove (delete) songs from playlists functionality added
--Frontend and backend fully integrated for playlist operations
--Improved UI feedback for add/remove playlist actions
--Fixed playback and playlist interaction edge cases
+### ✅ Day 3 – Database & APIs
+- Database schema designed (categories, tracks, podcasts)  
+- Foreign key relationships implemented  
+- Express APIs created and tested with real data  
+
+### ✅ Day 4 – Audio Player
+- Global audio player using HTML5 Audio API  
+- Audio state managed via Context API  
+- Backend-powered music search  
+- Play, pause, seek functionality  
+- Persistent mini-player across routes  
+- Currently playing track highlighted  
+
+### ✅ Day 5 – Playlists
+- Playlist creation and management  
+- Add/remove tracks from playlists  
+- Playlist–track relationships handled via backend  
+- Dynamic playlist rendering  
+- Smooth frontend–backend integration  
