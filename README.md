@@ -46,10 +46,9 @@ Full-stack music and podcast streaming web application.
 ### ✅ Day 5
 -Playlist creation and management implemented
 -Add songs to playlists using dropdown selection
--Playlist–track relationship handled with backend APIs
+-Playlist–track relationship handled via backend APIs
 -Songs displayed dynamically inside selected playlists
 -Remove (delete) songs from playlists functionality added
 -Frontend and backend fully integrated for playlist operations
 -Improved UI feedback for add/remove playlist actions
 -Fixed playback and playlist interaction edge cases
-
