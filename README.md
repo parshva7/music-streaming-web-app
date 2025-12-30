@@ -41,5 +41,15 @@ Full-stack music and podcast streaming web application.
 - Seek functionality added for audio playback
 - Fixed bottom mini-player created for continuous playback
 - Currently playing track highlighted in UI
-- Audio playback persists across route changes 
+- Audio playback persists across route changes
+
+### ✅ Day 5
+-Playlist creation and management implemented
+-Add songs to playlists using dropdown selection
+-Playlist–track relationship handled with backend APIs
+-Songs displayed dynamically inside selected playlists
+-Remove (delete) songs from playlists functionality added
+-Frontend and backend fully integrated for playlist operations
+-Improved UI feedback for add/remove playlist actions
+-Fixed playback and playlist interaction edge cases
 
