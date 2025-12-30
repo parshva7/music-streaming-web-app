@@ -1,14 +1,14 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useRef,
   useState,
+  useEffect,
 } from "react";
 
-const AudioPlayerContext = createContext(null);
+const AudioPlayerContext = createContext();
 
-export const AudioPlayerProvider = ({ children }) => {
+export function AudioPlayerProvider({ children }) {
   const audioRef = useRef(new Audio());
 
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -16,31 +16,22 @@ export const AudioPlayerProvider = ({ children }) => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // ▶ Play a new track
+  /* ▶ Play a new track */
   const playTrack = (track) => {
-    if (!track?.audio_url) {
-      alert("No audio preview available for this track");
-      return;
-    }
-
     const audio = audioRef.current;
 
-    // New track selected
-    if (!currentTrack || currentTrack.id !== track.id) {
-      audio.pause();
+    if (audio.src !== track.audio_url) {
       audio.src = track.audio_url;
-      audio.load();
-      setCurrentTrack(track);
     }
 
     audio.play();
+    setCurrentTrack(track);
     setIsPlaying(true);
   };
 
-  // ⏯ Toggle play / pause
+  /* ⏯ Toggle play/pause */
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!currentTrack) return;
 
     if (audio.paused) {
       audio.play();
@@ -51,34 +42,28 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  // ⏩ Seek audio
-  const seek = (time) => {
-    audioRef.current.currentTime = time;
+  /* 🎯 Seek function (THIS FIXES THE SLIDER) */
+  const seek = (value) => {
+    const audio = audioRef.current;
+    audio.currentTime = value;
+    setProgress(value);
   };
 
-  // 🎧 Audio listeners
+  /* Track progress */
   useEffect(() => {
     const audio = audioRef.current;
 
-    const handleTimeUpdate = () => {
+    const updateTime = () => {
       setProgress(audio.currentTime);
       setDuration(audio.duration || 0);
     };
 
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setProgress(0);
-    };
-
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("loadedmetadata", handleTimeUpdate);
-    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("loadedmetadata", updateTime);
 
     return () => {
-      audio.pause();
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("loadedmetadata", handleTimeUpdate);
-      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("timeupdate", updateTime);
+      audio.removeEventListener("loadedmetadata", updateTime);
     };
   }, []);
 
@@ -87,25 +72,18 @@ export const AudioPlayerProvider = ({ children }) => {
       value={{
         currentTrack,
         isPlaying,
-        progress,
-        duration,
         playTrack,
         togglePlay,
+        progress,
+        duration,
         seek,
       }}
     >
       {children}
     </AudioPlayerContext.Provider>
   );
-};
+}
 
-// Hook
-export const useAudioPlayer = () => {
-  const context = useContext(AudioPlayerContext);
-  if (!context) {
-    throw new Error(
-      "useAudioPlayer must be used inside AudioPlayerProvider"
-    );
-  }
-  return context;
-};
+export function useAudioPlayer() {
+  return useContext(AudioPlayerContext);
+}

@@ -21,17 +21,15 @@ export default function MiniPlayer() {
         right: 0,
         background: "#111",
         color: "#fff",
-        padding: "12px",
+        padding: "10px",
         display: "flex",
         alignItems: "center",
-        gap: "12px",
+        gap: "10px",
       }}
     >
       <div style={{ flex: 1 }}>
         <strong>{currentTrack.title}</strong>
-        <div style={{ fontSize: "12px", color: "#aaa" }}>
-          {currentTrack.artist}
-        </div>
+        <div style={{ fontSize: "12px" }}>{currentTrack.artist}</div>
       </div>
 
       <button onClick={togglePlay}>
@@ -40,10 +38,10 @@ export default function MiniPlayer() {
 
       <input
         type="range"
-        min="0"
+        min={0}
         max={duration}
         value={progress}
-        onChange={(e) => seek(e.target.value)}
+        onChange={(e) => seek(Number(e.target.value))}
         style={{ flex: 2 }}
       />
     </div>

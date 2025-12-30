@@ -17,7 +17,6 @@ app.use(express.json());
 
 /* =========================
    Supabase Client
-   (Service Role – Backend only)
 ========================= */
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -30,12 +29,13 @@ const supabase = createClient(
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
 });
+
+/* =========================
+   iTunes Search
+========================= */
 app.get("/search", async (req, res) => {
   const query = req.query.q;
-
-  if (!query) {
-    return res.status(400).json({ error: "Search query required" });
-  }
+  if (!query) return res.status(400).json({ error: "Query required" });
 
   try {
     const response = await fetch(
@@ -44,105 +44,131 @@ app.get("/search", async (req, res) => {
       )}&entity=song&limit=20`
     );
 
-    const data = await response.json();
+    const json = await response.json();
 
-    const songs = data.results.map((song) => ({
-      id: song.trackId,
-      title: song.trackName,
-      artist: song.artistName,
-      audio_url: song.previewUrl,
-      cover_url: song.artworkUrl100,
-      duration: Math.floor(song.trackTimeMillis / 1000),
+    const songs = json.results.map((s) => ({
+      external_id: String(s.trackId),
+      title: s.trackName,
+      artist: s.artistName,
+      audio_url: s.previewUrl,
+      cover_url: s.artworkUrl100,
+      duration: Math.floor(s.trackTimeMillis / 1000),
     }));
 
     res.json(songs);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Failed to fetch songs" });
   }
 });
 
 /* =========================
-   GET /categories
+   Playlists
 ========================= */
-app.get("/categories", async (req, res) => {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name");
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+/* Create playlist */
+app.post("/playlists", async (req, res) => {
+  const { name, user_id } = req.body;
+
+  if (!name || !user_id) {
+    return res.status(400).json({ error: "name and user_id required" });
   }
+
+  const { data, error } = await supabase
+    .from("playlists")
+    .insert({ name, user_id })
+    .select()
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data);
+});
+
+/* Get user playlists */
+app.get("/playlists/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  const { data, error } = await supabase
+    .from("playlists")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) return res.status(500).json({ error: error.message });
 
   res.json(data);
 });
 
 /* =========================
-   GET /tracks
+   Playlist Tracks
 ========================= */
-/**
- * GET /tracks?search=
- */
-app.get("/tracks", async (req, res) => {
-  const search = req.query.search || "";
 
-  let query = supabase
-    .from("tracks")
-    .select(`
-      id,
+/* Add song to playlist */
+app.post("/playlists/:playlistId/tracks", async (req, res) => {
+  const { playlistId } = req.params;
+  const {
+    external_id,
+    title,
+    artist,
+    audio_url,
+    cover_url,
+    duration,
+  } = req.body;
+
+  if (!external_id || !title) {
+    return res.status(400).json({ error: "Invalid track data" });
+  }
+
+  const { error } = await supabase
+    .from("playlist_tracks")
+    .insert({
+      playlist_id: playlistId,
+      external_id,
       title,
       artist,
       audio_url,
       cover_url,
       duration,
-      categories (
-        id,
-        name
-      )
-    `)
-    .order("created_at", { ascending: false });
+    });
 
-  if (search) {
-    query = query.or(
-      `title.ilike.%${search}%,artist.ilike.%${search}%`
-    );
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
-  const { data, error } = await query;
-
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
-  res.json(data);
+  res.json({ success: true });
 });
 
+/* Get songs in a playlist */
+app.get("/playlists/:playlistId/tracks", async (req, res) => {
+  const { playlistId } = req.params;
 
-/* =========================
-   GET /podcasts
-========================= */
-app.get("/podcasts", async (req, res) => {
   const { data, error } = await supabase
-    .from("podcasts")
-    .select(`
-      id,
-      title,
-      host,
-      audio_url,
-      cover_url,
-      categories (
-        id,
-        name
-      )
-    `)
+    .from("playlist_tracks")
+    .select("*")
+    .eq("playlist_id", playlistId)
     .order("created_at", { ascending: false });
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data);
+});
+
+/* Delete song from playlist */
+/* Delete track from playlist */
+app.delete("/playlists/:playlistId/tracks/:externalId", async (req, res) => {
+  const { playlistId, externalId } = req.params;
+
+  const { error } = await supabase
+    .from("playlist_tracks")
+    .delete()
+    .eq("playlist_id", playlistId)
+    .eq("external_id", externalId);
 
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
-  res.json(data);
+  res.json({ success: true });
 });
+
 
 /* =========================
    Server Start
