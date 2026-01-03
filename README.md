@@ -44,4 +44,17 @@ Full-stack music and podcast streaming web application.
 - Add/remove tracks from playlists  
 - Playlist–track relationships handled via backend  
 - Dynamic playlist rendering  
-- Smooth frontend–backend integration  
+- Smooth frontend–backend integration
+
+### ✅ Day 6 – Favorites, Podcasts & Advanced Playback
+- Like / favorite tracks with persistent storage  
+- Favorites page to browse and play liked songs  
+- Podcast browsing and playback support  
+- Unified audio player for music & podcasts  
+- Play queue support across music, favorites, and podcasts  
+- Next / previous track navigation working across queues  
+- Shuffle and repeat modes added  
+- Volume control and seek support  
+- Mini-player synced with global audio state  
+- Audio stops automatically on logout for security  
+
