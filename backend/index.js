@@ -169,6 +169,94 @@ app.delete("/playlists/:playlistId/tracks/:externalId", async (req, res) => {
   res.json({ success: true });
 });
 
+app.post("/favorites", async (req, res) => {
+  const {
+    user_id,
+    external_id,
+    title,
+    artist,
+    audio_url,
+    cover_url,
+    duration,
+  } = req.body;
+
+  if (!user_id || !external_id) {
+    return res.status(400).json({ error: "Invalid data" });
+  }
+
+  const { error } = await supabase
+    .from("favorite_tracks")
+    .insert({
+      user_id,
+      external_id,
+      title,
+      artist,
+      audio_url,
+      cover_url,
+      duration,
+    });
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json({ success: true });
+});
+
+app.get("/favorites/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  const { data, error } = await supabase
+    .from("favorite_tracks")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data);
+});
+app.delete("/favorites/:userId/:externalId", async (req, res) => {
+  const { userId, externalId } = req.params;
+
+  const { error } = await supabase
+    .from("favorite_tracks")
+    .delete()
+    .eq("user_id", userId)
+    .eq("external_id", externalId);
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json({ success: true });
+});
+/* =========================
+   Podcast Search
+========================= */
+app.get("/podcasts", async (req, res) => {
+  const query = req.query.q || "podcast";
+
+  try {
+    const response = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(
+        query
+      )}&media=podcast&entity=podcastEpisode&limit=20`
+    );
+
+    const json = await response.json();
+
+    const podcasts = json.results.map((p) => ({
+      external_id: String(p.trackId),
+      title: p.trackName,
+      artist: p.collectionName || p.artistName,
+      audio_url: p.previewUrl,
+      cover_url: p.artworkUrl600 || p.artworkUrl100,
+      duration: Math.floor((p.trackTimeMillis || 0) / 1000),
+    }));
+
+    res.json(podcasts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch podcasts" });
+  }
+});
+
 
 /* =========================
    Server Start

@@ -1,12 +1,20 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../services/supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import { useAudioPlayer } from "../context/AudioPlayerContext"; // ✅ REQUIRED
 
 export default function Navbar() {
   const { user, loading } = useAuth();
+  const { stop } = useAudioPlayer(); // ✅ REQUIRED
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isAuthPage =
+    location.pathname === "/login" ||
+    location.pathname === "/signup";
 
   const handleLogout = async () => {
+    stop(); // ✅ stops music + podcasts immediately
     await supabase.auth.signOut();
     navigate("/login");
   };
@@ -26,20 +34,25 @@ export default function Navbar() {
 
       {/* Right */}
       {!loading && (
-        <div>
-          {user ? (
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          {/* Logged OUT */}
+          {!user && (
             <>
-              <span style={{ marginRight: "12px" }}>
-                {user.email}
-              </span>
-              <button onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" style={{ marginRight: "12px" }}>
-                Login
-              </Link>
+              <Link to="/login">Login</Link>
               <Link to="/signup">Signup</Link>
+            </>
+          )}
+
+          {/* Logged IN */}
+          {user && !isAuthPage && (
+            <>
+              <span>{user.email}</span>
+
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/favorites">❤️ Favorites</Link>
+              <Link to="/podcasts">🎧 Podcasts</Link>
+
+              <button onClick={handleLogout}>Logout</button>
             </>
           )}
         </div>

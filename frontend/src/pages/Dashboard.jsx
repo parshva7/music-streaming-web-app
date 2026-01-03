@@ -138,10 +138,12 @@ export default function Dashboard() {
         <p>No songs found</p>
       )}
 
-      {tracks.map((track) => (
+      {tracks.map((track,index) => (
         <TrackCard
           key={track.external_id || track.id}
           track={track}
+          tracks={tracks}   // 👈 REQUIRED
+          index={index}  
           playlists={playlists}
         />
       ))}
